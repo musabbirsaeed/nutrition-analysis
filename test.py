@@ -1,3 +1,3 @@
-print ("hello world")
-
 import flask
+
+print ("hello world")
