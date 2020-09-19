@@ -1,0 +1,15 @@
+# @app.route('/end', methods=['POST'])
+# def output():
+
+#     nu_df  = getdata()
+    
+#     return render_template('end.html', tables=[nu_df.to_html(classes='data', header="true")])
+
+# @app.route('/end')
+# def endout():
+    
+#     result_plot1, result_plot2 = get_plot()
+#     script, div = components(result_plot1)
+#     script2, div2 = components(result_plot2)
+
+#     return render_template('end.html', script=script, div=div, script2=script2, div2=div2) 

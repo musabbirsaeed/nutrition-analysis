@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, url_for
+from flask import Flask, request, render_template, redirect, url_for
 from datetime import datetime
 
 import json
@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from bokeh.plotting import figure, output_file, show
 from bokeh.models import ColumnDataSource
 from bokeh.models import DatetimeTickFormatter
-from bokeh.resources import CDN
+from bokeh.resources import CDN 
 from bokeh.embed import file_html, components
 from bokeh.palettes import Spectral3
 import pandas_bokeh
@@ -137,23 +137,18 @@ def get_plot():
     
     return (a_plot, b_plot )
 
-
-
 @app.route('/end', methods=['POST'])
 def output():
 
     nu_df  = getdata()
     
-    return render_template('end.html', tables=[nu_df.to_html(classes='data', header="true")])
-
-@app.route('/end', methods=['POST'])
-def end():
-    
     result_plot1, result_plot2 = get_plot()
     script, div = components(result_plot1)
     script2, div2 = components(result_plot2)
 
-    return render_template('end.html', script=script, div=div, script2=script2, div2=div2) 
+    return render_template('end.html', script=script, div=div, script2=script2, div2=div2,
+                           tables=[nu_df.to_html(classes='data', header="true")]) 
+
 
 @app.route('/about')
 def about():
