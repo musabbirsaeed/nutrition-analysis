@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
 
-    <title>Bootstrap Example</title>
+    <title>Nutrition Analysis</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -44,19 +44,20 @@
 
 <div class="container">
 <h2>Nutrition Analysis</h2>
-<p>This is your detailed nutrition analysis including macronutrients and micronutrients.</p>          
+<p>Table 1. This is your detailed nutrition analysis including macronutrients and micronutrients.</p>          
 {% for table in tables %}
-    {{ table|safe }}
+{{ table|safe }}
 {% endfor %}
     <p></p>     
 </div
-
-
+  
   <div class="page">
+    <p>Figure 1. Amount of nutrients vs food item A) macronutrients and B) micronutrients.</p>   
   {{ div2|safe}}
   </div>
   
   <div class="page">
+    <p>Figure 2. Relationship between Calories(kcal) and macronutrients.</p>   
   {{ div|safe }}
   </div>
   
