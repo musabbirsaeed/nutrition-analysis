@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, json
 # from datetime import datetime
 
 import json
@@ -13,6 +13,7 @@ from bokeh.resources import CDN
 from bokeh.embed import file_html, components
 from bokeh.palettes import Spectral3
 import pandas_bokeh
+
 
 app = Flask(__name__)
 
@@ -49,8 +50,10 @@ def getdata():
     data = requests.post('https://trackapi.nutritionix.com/v2/natural/nutrients', headers=HEADERS,data=DATA).json()
 
     # constructing and returning an array of the foods
-    Pantry = []
-    foods = data['foods']  # getting all the food from the json
+
+    foods = data['foods']
+
+    Pantry = []  # getting all the food from the json
     for food in foods:
         foodName = food['food_name']  # getting the food name
         fullNutrients = food['full_nutrients']  # getting information
@@ -67,29 +70,29 @@ def getdata():
     xdf = pd.DataFrame(data_nut, index= data_name )
     xdf.loc["total"] = xdf.sum()
     xdf = xdf.reset_index()
-    df = xdf.rename(columns={208: 'Calories(kcal)',
-                         203: 'Protein(g)', 
-                         204: 'Total Fat(g)',
-                         205: 'Total Carbohydrate(g)',
-                         606: 'Total saturated Fat(g)',
-                         291: 'Fiber, total dietary(g)',
-                         401: 'Vitamin C(mg)',
-                         323: 'Vitamin E(mg)',
-                         415: 'Vitamin B6(mg)',
-                         301: 'Calcium, Ca(mg)',
-                         303: 'Iron, Fe(mg)',
-                         304: 'Magnesium, Mg(mg)',
-                         305: 'Phosphorus, P(mg)',
-                         309: 'Zinc, Zn(mg)',
-                         307: 'Sodium, Na(mg)',
-                         306: 'Potassium, K(mg)',
-                         'index': 'Food items'})
+    df = xdf.rename(columns={208: 'Calories (kcal)',
+                        203: 'Protein (g)', 
+                        204: 'Total Fat(g)',
+                        205: 'Total Carbs(g)',
+                        606: 'Total saturated Fat(g)',
+                        291: 'Fiber, total dietary(g)',
+                        401: 'Vitamin C(mg)',
+                        323: 'Vitamin E(mg)',
+                        415: 'Vitamin B6(mg)',
+                        301: 'Calcium, Ca(mg)',
+                        303: 'Iron, Fe(mg)',
+                        304: 'Magnesium, Mg(mg)',
+                        305: 'Phosphorus, P(mg)',
+                        309: 'Zinc, Zn(mg)',
+                        307: 'Sodium, Na(mg)',
+                        306: 'Potassium, K(mg)',
+                        'index': 'Food items'})
     s_df = df[[ 'Food items',
-            'Calories(kcal)',
-            'Protein(g)', 
+            'Calories (kcal)',
+            'Protein (g)', 
             'Total Fat(g)',
             'Total saturated Fat(g)',
-            'Total Carbohydrate(g)',
+            'Total Carbs(g)',
             'Fiber, total dietary(g)',
             'Vitamin C(mg)',
             'Vitamin E(mg)',
@@ -104,13 +107,15 @@ def getdata():
     
     return s_df
 
+
+
 def get_plot():
     nu_df  = getdata()
 
     mac_df = nu_df[['Food items',
-           'Protein(g)',
+           'Protein (g)',
            'Total Fat(g)',
-           'Total Carbohydrate(g)', 
+           'Total Carbs(g)', 
            'Fiber, total dietary(g)']]
     
     min_df = nu_df[['Food items', 'Vitamin C(mg)',
@@ -124,10 +129,10 @@ def get_plot():
                 'Sodium, Na(mg)',
              'Potassium, K(mg)']]
     
-    pw = nu_df.plot_bokeh.scatter(x = 'Food items', y = 'Calories(kcal)', show_figure=False )
-    px = nu_df.plot_bokeh.scatter(x = 'Calories(kcal)', y= 'Protein(g)', category='Food items', show_figure=False )
-    py = nu_df.plot_bokeh.scatter(x = 'Calories(kcal)', y= 'Total Fat(g)', category='Food items', show_figure=False )
-    pz = nu_df.plot_bokeh.scatter(x = 'Calories(kcal)', y= 'Total Carbohydrate(g)', category='Food items',show_figure=False )
+    pw = nu_df.plot_bokeh.scatter(x = 'Food items', y = 'Calories (kcal)', show_figure=False )
+    px = nu_df.plot_bokeh.scatter(x = 'Calories (kcal)', y= 'Protein (g)', category='Food items', show_figure=False )
+    py = nu_df.plot_bokeh.scatter(x = 'Calories (kcal)', y= 'Total Fat(g)', category='Food items', show_figure=False )
+    pz = nu_df.plot_bokeh.scatter(x = 'Calories (kcal)', y= 'Total Carbs(g)', category='Food items',show_figure=False )
     pm = mac_df.plot_bokeh.bar(x = 'Food items', ylabel="grams (g)", show_figure=False)
     pn = min_df.plot_bokeh.bar(x = 'Food items', ylabel="milligrams (mg)", show_figure=False)
 
@@ -147,8 +152,16 @@ def output():
     script2, div2 = components(result_plot2)
 
     return render_template('end.html', script=script, div=div, script2=script2, div2=div2,
-                           tables=[nu_df.to_html(classes='data', header="true")]) 
+                           tables=[nu_df.to_html(classes=["table-bordered", "table-striped", "table-hover"], header="true")]) 
 
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("404.html")
+
+@app.errorhandler(KeyError)
+def not_found(e):
+    return render_template("500.html")
 
 @app.route('/about')
 def about():
