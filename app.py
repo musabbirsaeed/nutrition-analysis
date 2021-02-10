@@ -87,7 +87,7 @@ def getdata():
                         307: 'Sodium, Na(mg)',
                         306: 'Potassium, K(mg)',
                         'index': 'Food items'})
-    s_df = df[[ 'Food items',
+    s_df = df.loc[:,df.columns.isin([ 'Food items',
             'Calories (kcal)',
             'Protein (g)', 
             'Total Fat(g)',
@@ -103,7 +103,7 @@ def getdata():
             'Phosphorus, P(mg)',
             'Zinc, Zn(mg)',
             'Sodium, Na(mg)',
-            'Potassium, K(mg)']]
+            'Potassium, K(mg)'])]
     
     return s_df
 
